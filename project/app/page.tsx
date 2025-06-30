@@ -1,15 +1,12 @@
 'use client';
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import {
   Search,
-  PlayCircle,
   ArrowRight,
   Clock,
-  Goal as Football,
-  Film,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,10 +17,6 @@ export default function Page() {
   const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
-
-  useEffect(() => {
-    // Optional: Any logic you want on mount
-  }, []);
 
   return (
     <main className="p-6 space-y-8">
@@ -45,18 +38,17 @@ export default function Page() {
         <div className="bg-muted p-4 rounded">
           <p className="mb-2">Log in to save events and RSVP.</p>
           <Button onClick={() => setModalOpen(true)} variant="outline">
-            Open Login
+            Log In
           </Button>
           <AuthModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
         </div>
       ) : (
         <div>
-          <p>Welcome back, {user.name || 'friend'}!</p>
+          <p className="text-muted-foreground">Welcome back, {user.name || 'friend'}!</p>
         </div>
       )}
 
       <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Example Event Cards */}
         <div className="border p-4 rounded shadow-sm hover:shadow-md transition">
           <h2 className="text-lg font-semibold">Sunday Night Football</h2>
           <div className="flex items-center text-muted-foreground text-sm gap-2 mt-2">
@@ -70,8 +62,6 @@ export default function Page() {
             View Details <ArrowRight className="w-4 h-4 ml-1" />
           </Link>
         </div>
-
-        {/* Add more cards here */}
       </section>
     </main>
   );
