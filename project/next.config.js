@@ -1,10 +1,8 @@
-// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone', // required for Netlify or Docker
-  experimental: {
-    forceDynamic: true, // optional safeguard
-  }
+  output: 'standalone',
+  // Add other valid config options here if needed
 };
 
 module.exports = nextConfig;
+
