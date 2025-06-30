@@ -1,44 +1,58 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
-interface VenueDetailClientProps {
-  venue: {
-    id: string;
-    name: string;
-    address: string;
-    description: string;
-    image_url: string;
-    events?: {
-      title: string;
-      start_time: string;
-    }[];
-  };
+interface Venue {
+  id: string;
+  name: string;
+  description?: string;
+  location?: string;
+  created_at?: string;
 }
 
-export default function VenueDetailClient({ venue }: VenueDetailClientProps) {
-  const [nextEvent, setNextEvent] = useState<string | null>(null);
+export default function VenueDetailClient() {
+  const { id } = useParams();
+  const [venue, setVenue] = useState<Venue | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (venue.events && venue.events.length > 0) {
-      const next = venue.events[0];
-      setNextEvent(`${next.title} @ ${new Date(next.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
+    const fetchVenue = async () => {
+      const { data, error } = await supabase
+        .from('venues')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching venue:', error);
+      } else {
+        setVenue(data);
+      }
+
+      setLoading(false);
+    };
+
+    if (id) {
+      fetchVenue();
     }
-  }, [venue.events]);
+  }, [id]);
+
+  if (loading) {
+    return <p className="text-white">Loading venue...</p>;
+  }
+
+  if (!venue) {
+    return <p className="text-white">Venue not found.</p>;
+  }
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <img
-        src={venue.image_url}
-        alt={venue.name}
-        className="w-full h-64 object-cover rounded-md shadow mb-6"
-      />
-      <h1 className="text-3xl font-bold mb-2">{venue.name}</h1>
-      <p className="text-gray-600 mb-2">{venue.address}</p>
-      <p className="text-gray-800 mb-4 whitespace-pre-line">{venue.description}</p>
-      {nextEvent && (
-        <p className="text-green-600 font-medium">Next event: {nextEvent}</p>
-      )}
+    <div className="text-white p-6">
+      <h1 className="text-2xl font-bold mb-2">{venue.name}</h1>
+      {venue.description && <p className="mb-2">{venue.description}</p>}
+      {venue.location && <p className="mb-2">Location: {venue.location}</p>}
+      {venue.created_at && <p className="text-sm">Created at: {new Date(venue.created_at).toLocaleString()}</p>}
     </div>
   );
 }
