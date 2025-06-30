@@ -19,6 +19,7 @@ import { useAuth } from '@/hooks/use-auth';
 export default function Page() {
   const { user } = useAuth();
   const [search, setSearch] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     // Optional: Any logic you want on mount
@@ -43,7 +44,10 @@ export default function Page() {
       {!user ? (
         <div className="bg-muted p-4 rounded">
           <p className="mb-2">Log in to save events and RSVP.</p>
-          <AuthModal />
+          <Button onClick={() => setModalOpen(true)} variant="outline">
+            Open Login
+          </Button>
+          <AuthModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
         </div>
       ) : (
         <div>
