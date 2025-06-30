@@ -14,7 +14,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: 'WatchTogether - Find Your Next Watch Party',
+  title: 'StreamSpot - Find the vibe. Watch together.',
   description: 'Discover local venues hosting watch parties for your favorite shows, sports, and movies.',
 };
 
