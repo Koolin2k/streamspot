@@ -1,8 +1,11 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  reactStrictMode: true,
   experimental: {
-    forceDynamic: true,
-  }
+    // ✅ Only supported keys go here if needed
+    serverActions: true,
+  },
 };
 
 module.exports = nextConfig;
+
