@@ -1,7 +1,6 @@
+export const dynamic = 'force-dynamic';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
-
-export const dynamic = 'force-dynamic'; // Ensures dynamic rendering
 
 export default async function VenuesPage() {
   const { data: venues, error } = await supabase
