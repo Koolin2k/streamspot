@@ -20,7 +20,6 @@ export default async function VenuePage({ params }: Props) {
     <div className="min-h-screen bg-[#0B0B0E] text-white p-4">
       <h1 className="text-2xl font-bold mb-2">{data.name}</h1>
       <p className="text-md">{data.description}</p>
-      {/* Add more fields as needed */}
     </div>
   );
 }
