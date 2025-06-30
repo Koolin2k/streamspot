@@ -1,26 +1,26 @@
+export const dynamic = "force-dynamic";
+
 import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 
-export async function generateStaticParams() {
-  const { data: venues, error } = await supabase.from('venues').select('id');
-  if (error || !venues) return [];
-
-  return venues.map((venue) => ({ id: venue.id }));
+interface Props {
+  params: { id: string };
 }
 
-export default async function VenuePage({ params }: { params: { id: string } }) {
-  const { data: venue, error } = await supabase
+export default async function VenuePage({ params }: Props) {
+  const { data, error } = await supabase
     .from('venues')
     .select('*')
     .eq('id', params.id)
     .single();
 
-  if (error || !venue) notFound();
+  if (error || !data) return notFound();
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold">{venue.name}</h1>
-      <p>{venue.description}</p>
+    <div className="min-h-screen bg-[#0B0B0E] text-white p-4">
+      <h1 className="text-2xl font-bold mb-2">{data.name}</h1>
+      <p className="text-md">{data.description}</p>
+      {/* Add more fields as needed */}
     </div>
   );
 }
