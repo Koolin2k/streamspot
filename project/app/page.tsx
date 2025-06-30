@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -26,10 +27,7 @@ export default function Page() {
   const [modalOpen, setModalOpen] = useState(false);
   const [events, setEvents] = useState<EventItem[]>([]);
 
-  const displayName =
-    user && typeof user === 'object' && 'email' in user && user.email
-      ? user.email.split('@')[0]
-      : 'friend';
+  const displayName = typeof user === 'object' && 'email' in user ? user.email?.split('@')[0] : 'friend';
 
   useEffect(() => {
     // Replace this with real fetch from Supabase or other backend
