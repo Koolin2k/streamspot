@@ -18,6 +18,8 @@ export default function Page() {
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
 
+  const displayName = typeof user === 'object' && 'email' in user ? user.email?.split('@')[0] : 'friend';
+
   return (
     <main className="p-6 space-y-8">
       <h1 className="text-2xl font-bold">Welcome to StreamSpot</h1>
@@ -44,7 +46,7 @@ export default function Page() {
         </div>
       ) : (
         <div>
-          <p className="text-muted-foreground">Welcome back, {user.name || 'friend'}!</p>
+          <p className="text-muted-foreground">Welcome back, {displayName}!</p>
         </div>
       )}
 
@@ -66,3 +68,4 @@ export default function Page() {
     </main>
   );
 }
+
