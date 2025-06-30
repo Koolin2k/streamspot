@@ -1,22 +1,10 @@
+// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone', // required for Netlify or Docker
   experimental: {
-    appDir: true,
-  },
-  output: 'standalone',
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-store, must-revalidate',
-          },
-        ],
-      },
-    ];
-  },
+    forceDynamic: true, // optional safeguard
+  }
 };
 
 module.exports = nextConfig;
