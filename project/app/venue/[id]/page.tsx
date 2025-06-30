@@ -20,3 +20,7 @@ export default async function VenuePage({ params }: VenuePageProps) {
 
   return <VenueDetailClient venue={venue} />;
 }
+
+export async function generateStaticParams() {
+  const { data: venues } = await supabase.from('venues').select('id');
+  return venues?.map((venue) => ({ id: venue.id })) || [];
