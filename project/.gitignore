@@ -34,3 +34,47 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+// Add this to your GitHub repo's `.gitignore` if it isn't already there
+.next/
+
+// To cache Next.js build output for faster GitHub Actions builds, set up your workflow file like this:
+
+// .github/workflows/deploy.yml
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Restore Next.js cache
+        uses: actions/cache@v3
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Deploy
+        run: echo "Add your deployment logic here (e.g., Vercel CLI, SCP, rsync)"
+
+// This caches the Next.js build output and restores it to speed up future builds.
+// Adjust deployment logic based on where you're deploying (Vercel, AWS, etc).
