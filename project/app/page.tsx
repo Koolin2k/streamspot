@@ -27,7 +27,10 @@ export default function Page() {
   const [modalOpen, setModalOpen] = useState(false);
   const [events, setEvents] = useState<EventItem[]>([]);
 
-  const displayName = typeof user === 'object' && 'email' in user ? user.email?.split('@')[0] : 'friend';
+  const displayName =
+    user && typeof user === 'object' && 'email' in user && user.email
+      ? user.email.split('@')[0]
+      : 'friend';
 
   useEffect(() => {
     // Replace this with real fetch from Supabase or other backend
@@ -103,5 +106,3 @@ export default function Page() {
     </main>
   );
 }
-
-
