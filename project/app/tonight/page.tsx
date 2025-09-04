@@ -46,7 +46,7 @@ export default function TonightsLineup() {
           venue: e.venue_name,
           start_time: e.start_time,
           category: e.category,
-          status: new Date(e.start_time) <= new Date() ? 'live' : 'upcoming',
+          status: (new Date(e.start_time) <= new Date() ? 'live' : 'upcoming') as 'live' | 'upcoming',
           attendees: e.attendees || 0,
           rsvped: false,
           avatars: [
