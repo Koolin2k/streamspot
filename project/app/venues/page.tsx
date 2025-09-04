@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
+import NearbyVenues from '@/components/NearbyVenues';
 
 export default async function VenuesPage() {
   const { data: venues, error } = await supabase
@@ -27,7 +28,11 @@ export default async function VenuesPage() {
   return (
     <div className="min-h-screen bg-[#0B0B0E] p-6 text-white">
       <h1 className="text-3xl font-bold mb-6">Venues</h1>
-      <ul className="space-y-4">
+      
+      {/* Nearby Venues Feature */}
+      <NearbyVenues />
+      
+      <ul className="space-y-4 mt-8">
         {venues.map((venue) => (
           <li key={venue.id} className="border border-gray-600 rounded-lg p-4">
             <Link href={`/venue/${venue.id}`}>
@@ -35,6 +40,11 @@ export default async function VenuesPage() {
                 <h2 className="text-xl font-semibold">{venue.name}</h2>
                 <p className="text-sm text-gray-400">{venue.location}</p>
                 <p className="mt-2 text-gray-300">{venue.description}</p>
+                {venue.latitude && venue.longitude && (
+                  <p className="text-xs text-blue-400 mt-1">
+                    📍 {venue.latitude.toFixed(4)}, {venue.longitude.toFixed(4)}
+                  </p>
+                )}
               </div>
             </Link>
           </li>
