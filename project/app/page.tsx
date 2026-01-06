@@ -1,105 +1,167 @@
 'use client';
-export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import {
-  Search,
-  ArrowRight,
-  Clock,
-} from 'lucide-react';
+import { useState } from 'react';
+import { MapPin, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { AuthModal } from '@/components/auth/auth-modal';
+import { EventCard } from '@/components/events/event-card';
 import { useAuth } from '@/hooks/use-auth';
+import { useLocation } from '@/hooks/use-location';
+import { useNearbyEvents } from '@/hooks/use-nearby-events';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
-interface EventItem {
-  id: string;
-  title: string;
-  time: string;
-  location: string;
-  slug: string;
-}
-
-export default function Page() {
+export default function HomePage() {
   const { user } = useAuth();
-  const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
-  const [events, setEvents] = useState<EventItem[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
 
-  const displayName = typeof user === 'object' && 'email' in user ? user.email?.split('@')[0] : 'friend';
+  const { coordinates, loading: locationLoading, error: locationError, permissionDenied, requestLocation } = useLocation();
+  const { events, loading: eventsLoading, error: eventsError } = useNearbyEvents({
+    coordinates,
+    category: selectedCategory,
+    enabled: !!coordinates,
+  });
 
-  useEffect(() => {
-    // Replace this with real fetch from Supabase or other backend
-    setEvents([
-      {
-        id: '1',
-        title: 'Sunday Night Football',
-        time: '8:15 PM EST',
-        location: 'NorthWest Stadium',
-        slug: 'snf-northwest',
-      },
-      {
-        id: '2',
-        title: 'UFC Fight Night',
-        time: '10:00 PM EST',
-        location: 'Main Street Bar',
-        slug: 'ufc-main-street',
-      },
-    ]);
-  }, []);
-
-  const filteredEvents = events.filter(event =>
-    event.title.toLowerCase().includes(search.toLowerCase())
-  );
+  const displayName = user?.email?.split('@')[0] || 'there';
+  const categories = ['sports', 'tv', 'culture'];
 
   return (
-    <main className="p-6 space-y-8">
-      <h1 className="text-2xl font-bold">Welcome to StreamSpot</h1>
+    <main className="min-h-screen bg-[#0B0B0E] text-white pb-20 md:pb-8">
+      <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        {/* Header */}
+        <div className="space-y-2">
+          <h1 className="text-3xl md:text-4xl font-bold font-space-grotesk">
+            Events Near You
+          </h1>
+          <p className="text-white/60">
+            Discover live sports, watch parties, and cultural events happening nearby
+          </p>
+        </div>
 
-      <div className="flex items-center gap-4">
-        <Input
-          placeholder="Search events, bars, games..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <Button>
-          <Search className="w-4 h-4 mr-2" />
-          Search
-        </Button>
+        {/* Location Status */}
+        {locationLoading && (
+          <Alert className="bg-emerald-500/10 border-emerald-500/30">
+            <Loader2 className="h-4 w-4 animate-spin text-emerald-400" />
+            <AlertDescription className="text-white/70">
+              Getting your location...
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {locationError && (
+          <Alert className="bg-orange-500/10 border-orange-500/30">
+            <AlertCircle className="h-4 w-4 text-orange-400" />
+            <AlertDescription className="text-white/70">
+              {locationError}
+              {permissionDenied && (
+                <Button
+                  onClick={requestLocation}
+                  variant="link"
+                  className="text-emerald-400 p-0 h-auto ml-2"
+                >
+                  Try again
+                </Button>
+              )}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {coordinates && (
+          <div className="flex items-center gap-2 text-sm text-white/60">
+            <MapPin className="w-4 h-4 text-emerald-400" />
+            <span>
+              Showing events within 10 miles of your location
+            </span>
+          </div>
+        )}
+
+        {/* Auth CTA */}
+        {!user && (
+          <Alert className="bg-white/5 border-white/10">
+            <AlertDescription className="flex items-center justify-between">
+              <span className="text-white/70">Sign in to save events and RSVP</span>
+              <Button
+                onClick={() => setModalOpen(true)}
+                className="bg-emerald-500 hover:bg-emerald-600 text-white"
+                size="sm"
+              >
+                Sign In
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Category Filter */}
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          <Button
+            onClick={() => setSelectedCategory(undefined)}
+            variant={selectedCategory === undefined ? 'default' : 'outline'}
+            className={
+              selectedCategory === undefined
+                ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
+                : 'border-white/20 text-white/70 hover:text-white hover:border-white/40'
+            }
+          >
+            All
+          </Button>
+          {categories.map((category) => (
+            <Button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              variant={selectedCategory === category ? 'default' : 'outline'}
+              className={
+                selectedCategory === category
+                  ? 'bg-emerald-500 hover:bg-emerald-600 text-white capitalize'
+                  : 'border-white/20 text-white/70 hover:text-white hover:border-white/40 capitalize'
+              }
+            >
+              {category}
+            </Button>
+          ))}
+        </div>
+
+        {/* Events Loading */}
+        {eventsLoading && (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-emerald-400" />
+          </div>
+        )}
+
+        {/* Events Error */}
+        {eventsError && (
+          <Alert className="bg-red-500/10 border-red-500/30">
+            <AlertCircle className="h-4 w-4 text-red-400" />
+            <AlertDescription className="text-white/70">
+              {eventsError}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Events Grid */}
+        {!eventsLoading && !eventsError && events.length > 0 && (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {events.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        )}
+
+        {/* No Events */}
+        {!eventsLoading && !eventsError && events.length === 0 && coordinates && (
+          <div className="text-center py-12">
+            <p className="text-white/60 text-lg">
+              No events found nearby
+              {selectedCategory && ` in ${selectedCategory}`}
+            </p>
+            <p className="text-white/40 text-sm mt-2">
+              Try selecting a different category or check back later
+            </p>
+          </div>
+        )}
       </div>
 
-      {!user ? (
-        <div className="bg-muted p-4 rounded">
-          <p className="mb-2">Log in to save events and RSVP.</p>
-          <Button onClick={() => setModalOpen(true)} variant="outline">
-            Log In
-          </Button>
-          <AuthModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
-        </div>
-      ) : (
-        <div>
-          <p className="text-muted-foreground">Welcome back, {displayName}!</p>
-        </div>
-      )}
-
-      <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredEvents.map(event => (
-          <div key={event.id} className="border p-4 rounded shadow-sm hover:shadow-md transition">
-            <h2 className="text-lg font-semibold">{event.title}</h2>
-            <div className="flex items-center text-muted-foreground text-sm gap-2 mt-2">
-              <Clock className="w-4 h-4" />
-              {event.time} · {event.location}
-            </div>
-            <Link
-              href={`/events/${event.slug}`}
-              className="inline-flex items-center mt-3 text-primary hover:underline"
-            >
-              View Details <ArrowRight className="w-4 h-4 ml-1" />
-            </Link>
-          </div>
-        ))}
-      </section>
+      {/* Auth Modal */}
+      <AuthModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </main>
   );
 }
