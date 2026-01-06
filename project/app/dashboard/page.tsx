@@ -6,7 +6,7 @@ import { Calendar, Clock, MapPin, Users, Settings, Bell, Trash2 } from 'lucide-r
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/use-auth';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/client';
 
 interface user_rsvp {
   id: string;
@@ -29,6 +29,8 @@ export default function Dashboard() {
   const router = useRouter();
   const [rsvps, setRsvps] = useState<user_rsvp[]>([]);
   const [loadingRsvps, setLoadingRsvps] = useState(true);
+
+  const supabase = createClient();
 
   useEffect(() => {
     if (!loading && !user) {

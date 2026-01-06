@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 
 interface Props {
@@ -8,6 +8,8 @@ interface Props {
 }
 
 export default async function VenuePage({ params }: Props) {
+  const supabase = await createClient();
+
   const { data, error } = await supabase
     .from('venues')
     .select('*')

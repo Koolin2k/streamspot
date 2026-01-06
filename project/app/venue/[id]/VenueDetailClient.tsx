@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/client';
 
 interface Venue {
   id: string;
@@ -20,6 +20,8 @@ export default function VenueDetailClient() {
 
   useEffect(() => {
     const fetchVenue = async () => {
+      const supabase = createClient();
+
       const { data, error } = await supabase
         .from('venues')
         .select('*')

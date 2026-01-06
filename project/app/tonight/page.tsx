@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AuthModal } from '@/components/auth/auth-modal';
 import { useAuth } from '@/hooks/use-auth';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/client';
 
 interface Event {
   id: string;
@@ -34,6 +34,8 @@ export default function TonightsLineup() {
 
   useEffect(() => {
     const fetchEvents = async () => {
+      const supabase = createClient();
+
       const { data, error } = await supabase
         .from('events')
         .select('*')
