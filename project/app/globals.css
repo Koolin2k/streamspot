@@ -151,3 +151,28 @@ html {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Mapbox Popup Styles */
+.mapboxgl-popup-content {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  padding: 0;
+}
+
+.mapboxgl-popup-close-button {
+  font-size: 20px;
+  padding: 4px 8px;
+  color: #666;
+}
+
+.mapboxgl-popup-close-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+.mapboxgl-popup-anchor-top .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  border-bottom-color: white;
+  border-top-color: white;
+}

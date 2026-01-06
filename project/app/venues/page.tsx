@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { createClient } from '@/lib/supabase/server';
-import Link from 'next/link';
+import { VenuesClient } from '@/components/venues/venues-client';
 
 export default async function VenuesPage() {
   const supabase = await createClient();
@@ -12,36 +12,25 @@ export default async function VenuesPage() {
 
   if (error) {
     return (
-      <div className="text-red-500 text-center mt-10">
-        Error loading venues: {error.message}
+      <div className="min-h-screen bg-[#0B0B0E] flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-400 text-lg">Error loading venues</p>
+          <p className="text-white/60 text-sm mt-2">{error.message}</p>
+        </div>
       </div>
     );
   }
 
   if (!venues || venues.length === 0) {
     return (
-      <div className="text-center mt-10 text-white">
-        No venues found.
+      <div className="min-h-screen bg-[#0B0B0E] flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-white/60 text-lg">No venues found</p>
+          <p className="text-white/40 text-sm mt-2">Check back later for new venues</p>
+        </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-[#0B0B0E] p-6 text-white">
-      <h1 className="text-3xl font-bold mb-6">Venues</h1>
-      <ul className="space-y-4">
-        {venues.map((venue) => (
-          <li key={venue.id} className="border border-gray-600 rounded-lg p-4">
-            <Link href={`/venue/${venue.id}`}>
-              <div>
-                <h2 className="text-xl font-semibold">{venue.name}</h2>
-                <p className="text-sm text-gray-400">{venue.location}</p>
-                <p className="mt-2 text-gray-300">{venue.description}</p>
-              </div>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+  return <VenuesClient venues={venues} />;
 }
