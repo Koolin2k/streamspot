@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Calendar, MapPin, User, Menu, X } from 'lucide-react';
+import { Home, Calendar, MapPin, User, PackageSearch } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AuthModal } from '@/components/auth/auth-modal';
 import { UserMenu } from '@/components/ui/user-menu';
@@ -13,6 +13,7 @@ const navItems = [
   { href: '/', icon: Home, label: 'Home' },
   { href: '/tonight', icon: Calendar, label: 'Tonight' },
   { href: '/venues', icon: MapPin, label: 'Venues' },
+  { href: '/orders/status', icon: PackageSearch, label: 'My Order' },
 ];
 
 export function Navigation() {
@@ -21,8 +22,13 @@ export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, loading } = useAuth();
 
-  // Hide navigation on admin and dashboard pages
-  if (pathname?.startsWith('/admin') || pathname?.startsWith('/dashboard') || pathname?.startsWith('/auth')) {
+  // Hide navigation on admin, dashboard, and staff pages
+  if (
+    pathname?.startsWith('/admin') ||
+    pathname?.startsWith('/dashboard') ||
+    pathname?.startsWith('/auth') ||
+    pathname?.startsWith('/staff')
+  ) {
     return null;
   }
 
